@@ -19,15 +19,13 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.ItemsListVisitor;
 import net.sf.jsqlparser.expression.operators.relational.MultiExpressionList;
+import net.sf.jsqlparser.parser.SimpleNode;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.SubSelect;
 import org.aspectj.util.Reflection;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Description:
@@ -77,9 +75,22 @@ public class PrimaryKeyListVisitor implements ItemsListVisitor {
         for (int i = 0; i < columns.size(); i++) {
             columns.get(i).setTable(table);
             if (primaryKeys.contains(columns.get(i).getFullyQualifiedName())) {
-                Object expression = expressions.get(i).getASTNode().jjtGetValue();
-                keyValues.put(columns.get(i).getFullyQualifiedName(),
-                        Reflection.invokeN(expression.getClass(), "getValue", expression, new Object[0]));
+                SimpleNode node = expressions.get(i).getASTNode();
+                if (Objects.nonNull(node)) {
+                    Object expression = node.jjtGetValue();
+                    keyValues.put(columns.get(i).getFullyQualifiedName(),
+                            Reflection.invokeN(expression.getClass(), "getValue", expression, new Object[0]));
+                } else {
+                    String strValue = expressions.get(i).toString();
+                    if (Objects.nonNull(strValue)) {
+                        try {
+                            Long longValue = Long.valueOf(strValue);
+                            keyValues.put(columns.get(i).getFullyQualifiedName(), longValue);
+                        } catch (NumberFormatException e) {
+                            keyValues.put(columns.get(i).getFullyQualifiedName(), strValue);
+                        }
+                    }
+                }
             }
         }
         return keyValues;
