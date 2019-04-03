@@ -16,11 +16,11 @@
 package com.codingapi.txlcn.txmsg;
 
 import com.codingapi.txlcn.txmsg.dto.AppInfo;
-import com.codingapi.txlcn.txmsg.dto.RpcResponseState;
-import com.codingapi.txlcn.txmsg.loadbalance.RpcLoadBalance;
 import com.codingapi.txlcn.txmsg.dto.MessageDto;
 import com.codingapi.txlcn.txmsg.dto.RpcCmd;
+import com.codingapi.txlcn.txmsg.dto.RpcResponseState;
 import com.codingapi.txlcn.txmsg.exception.RpcException;
+import com.codingapi.txlcn.txmsg.loadbalance.RpcLoadBalance;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -123,10 +123,10 @@ public abstract class RpcClient {
      *
      * @param remoteKey 远程标识
      * @param appName   应用名称
-     * @param labelName  TC标识名称
-     * @throws RpcException   RpcException
+     * @param labelName TC标识名称
+     * @throws RpcException RpcException
      */
-    public abstract void bindAppName(String remoteKey, String appName,String labelName) throws RpcException;
+    public abstract void bindAppName(String remoteKey, String appName, String labelName) throws RpcException;
 
 
     /**
@@ -136,6 +136,14 @@ public abstract class RpcClient {
      * @return 应用名称
      */
     public abstract String getAppName(String remoteKey);
+
+    /**
+     * 获取TC标识名称
+     *
+     * @param remoteKey 远程标识
+     * @return TC标识名称
+     */
+    public abstract String getModId(String remoteKey);
 
 
     /**

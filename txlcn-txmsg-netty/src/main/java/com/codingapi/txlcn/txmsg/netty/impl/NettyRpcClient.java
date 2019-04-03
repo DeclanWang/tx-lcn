@@ -21,8 +21,8 @@ import com.codingapi.txlcn.txmsg.dto.MessageDto;
 import com.codingapi.txlcn.txmsg.dto.RpcCmd;
 import com.codingapi.txlcn.txmsg.dto.RpcResponseState;
 import com.codingapi.txlcn.txmsg.exception.RpcException;
-import com.codingapi.txlcn.txmsg.netty.bean.SocketManager;
 import com.codingapi.txlcn.txmsg.netty.bean.NettyRpcCmd;
+import com.codingapi.txlcn.txmsg.netty.bean.SocketManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -92,19 +92,24 @@ public class NettyRpcClient extends RpcClient {
 
 
     @Override
-    public List<String> remoteKeys(String moduleName) {
-        return SocketManager.getInstance().removeKeys(moduleName);
+    public List<String> remoteKeys(String labelName) {
+        return SocketManager.getInstance().remoteKeys(labelName);
     }
 
 
     @Override
-    public void bindAppName(String remoteKey, String appName,String labelName) throws RpcException {
-        SocketManager.getInstance().bindModuleName(remoteKey, appName,labelName);
+    public void bindAppName(String remoteKey, String appName, String labelName) throws RpcException {
+        SocketManager.getInstance().bindModuleName(remoteKey, appName, labelName);
     }
 
     @Override
     public String getAppName(String remoteKey) {
         return SocketManager.getInstance().getModuleName(remoteKey);
+    }
+
+    @Override
+    public String getModId(String remoteKey) {
+        return SocketManager.getInstance().getLabelName(remoteKey);
     }
 
     @Override

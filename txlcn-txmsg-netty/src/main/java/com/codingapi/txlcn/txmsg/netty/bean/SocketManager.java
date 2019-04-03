@@ -169,13 +169,13 @@ public class SocketManager {
     /**
      * 获取模块的远程标识keys
      *
-     * @param moduleName 模块名称
+     * @param labelName TC标识名称
      * @return remoteKeys
      */
-    public List<String> removeKeys(String moduleName) {
+    public List<String> remoteKeys(String labelName) {
         List<String> allKeys = new ArrayList<>();
         for (Channel channel : channels) {
-            if (moduleName.equals(getModuleName(channel))) {
+            if (labelName.equals(getLabelName(channel))) {
                 allKeys.add(channel.remoteAddress().toString());
             }
         }
@@ -186,26 +186,26 @@ public class SocketManager {
     /**
      * 绑定连接数据
      *
-     * @param remoteKey  远程标识
-     * @param appName  模块名称
+     * @param remoteKey 远程标识
+     * @param appName   模块名称
      * @param labelName TC标识名称
      */
-    public void bindModuleName(String remoteKey, String appName,String labelName) throws RpcException{
+    public void bindModuleName(String remoteKey, String appName, String labelName) throws RpcException {
         AppInfo appInfo = new AppInfo();
         appInfo.setAppName(appName);
         appInfo.setLabelName(labelName);
         appInfo.setCreateTime(new Date());
-        if(containsLabelName(labelName)){
-            throw new RpcException("labelName:"+labelName+" has exist.");
+        if (containsLabelName(labelName)) {
+            throw new RpcException("labelName:" + labelName + " has exist.");
         }
         appNames.put(remoteKey, appInfo);
     }
 
-    public boolean containsLabelName(String moduleName){
-        Set<String> keys =  appNames.keySet();
-        for(String key:keys){
+    public boolean containsLabelName(String moduleName) {
+        Set<String> keys = appNames.keySet();
+        for (String key : keys) {
             AppInfo appInfo = appNames.get(key);
-            if(moduleName.equals(appInfo.getAppName())){
+            if (moduleName.equals(appInfo.getAppName())) {
                 return true;
             }
         }
@@ -230,12 +230,34 @@ public class SocketManager {
     /**
      * 获取模块名称
      *
+     * @param channel 管道信息
+     * @return 模块名称
+     */
+    public String getLabelName(Channel channel) {
+        String key = channel.remoteAddress().toString();
+        return getLabelName(key);
+    }
+
+    /**
+     * 获取模块名称
+     *
      * @param remoteKey 远程唯一标识
      * @return 模块名称
      */
     public String getModuleName(String remoteKey) {
         AppInfo appInfo = appNames.get(remoteKey);
         return appInfo == null ? null : appInfo.getAppName();
+    }
+
+    /**
+     * 获取TC标识名称
+     *
+     * @param remoteKey 远程唯一标识
+     * @return TC标识名称
+     */
+    public String getLabelName(String remoteKey) {
+        AppInfo appInfo = appNames.get(remoteKey);
+        return appInfo == null ? null : appInfo.getLabelName();
     }
 
     public List<AppInfo> appInfos() {
